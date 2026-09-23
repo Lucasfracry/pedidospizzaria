@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzaria Delícia - Cardápio Online</title>
+    <!-- Tailwind CSS para estilização rápida e moderna (Estilo iFood) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos adicionais para animações e scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ea1d2c; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #c21422; }
+        
+        .modal-enter { animation: slideUp 0.3s ease-out forwards; }
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Ocultar scrollbar nos menus de navegação horizontais */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans pb-24">
+
+    <!-- Cabeçalho -->
+    <header class="bg-red-600 text-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold"><i class="fa-solid fa-pizza-slice mr-2"></i> Pizzaria Delícia</h1>
+        </div>
+        <!-- Navegação de Categorias -->
+        <nav class="bg-white border-b shadow-sm overflow-x-auto no-scrollbar">
+            <ul class="flex whitespace-nowrap container mx-auto px-4 py-3 gap-6 text-gray-600 font-medium">
+                <li><a href="#pizzas" class="hover:text-red-600">Pizzas Salgadas</a></li>
+                <li><a href="#doces" class="hover:text-red-600">Pizzas Doces</a></li>
+                <li><a href="#vinhos" class="hover:text-red-600">Vinhos</a></li>
+                <li><a href="#refrigerantes" class="hover:text-red-600">Refrigerantes</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Banner -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="bg-red-500 rounded-xl p-6 text-white shadow-lg bg-cover bg-center" style="background-image: linear-gradient(rgba(234, 29, 44, 0.8), rgba(234, 29, 44, 0.9)), url('https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=80');">
+            <h2 class="text-3xl font-bold mb-2">A melhor pizza da região</h2>
+            <p>Peça agora e receba quentinha na sua casa!</p>
+        </div>
+    </div>
+
+    <!-- Container do Cardápio -->
+    <main class="container mx-auto px-4" id="menu-container">
+        <!-- O conteúdo será gerado via JavaScript -->
+    </main>
+
+    <!-- Botão Flutuante do Carrinho -->
+    <div id="cart-float-btn" class="fixed bottom-0 left-0 w-full bg-white border-t p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] hidden z-40 transform transition-transform duration-300">
+        <div class="container mx-auto flex justify-between items-center max-w-2xl">
+            <div class="flex flex-col">
+                <span class="text-sm text-gray-500">Total sem entrega</span>
+                <span class="font-bold text-lg" id="cart-float-total">R$ 0,00</span>
+            </div>
+            <button onclick="openCartModal()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-bold flex items-center hover:bg-red-700 transition">
+                <span id="cart-float-count" class="bg-white text-red-600 rounded-full w-6 h-6 flex items-center justify-center mr-2 text-sm">0</span>
+                Ver Carrinho
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: Detalhes do Item (Seleção de Sabores) -->
+    <div id="item-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-end sm:items-center justify-center">
+        <div class="bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto modal-enter relative">
+            <button onclick="closeItemModal()" class="absolute top-4 right-4 bg-gray-100 text-gray-600 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-200">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="p-6 pt-10" id="item-modal-content">
+                <!-- Conteúdo injetado via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Carrinho e Checkout -->
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-end sm:items-center justify-center">
+        <div class="bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto modal-enter relative flex flex-col">
+            <div class="p-4 border-b flex justify-between items-center sticky top-0 bg-white z-10 sm:rounded-t-2xl">
+                <h3 class="text-xl font-bold">Seu Pedido</h3>
+                <button onclick="closeCartModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            
+            <div class="p-4 flex-grow" id="cart-items-container">
+                <!-- Itens do carrinho -->
+            </div>
+
+            <!-- Formulário de Checkout -->
+            <form id="checkout-form" class="p-4 bg-gray-50 border-t" onsubmit="finalizeOrder(event)">
+                <h4 class="font-bold mb-3">Detalhes da Entrega</h4>
+                
+                <!-- Tipo de Pedido -->
+                <div class="flex gap-4 mb-4">
+                    <label class="flex-1 border rounded-lg p-3 cursor-pointer bg-white text-center hover:border-red-500 has-[:checked]:border-red-500 has-[:checked]:ring-1 has-[:checked]:ring-red-500 transition">
+                        <input type="radio" name="orderType" value="delivery" class="hidden" checked onchange="toggleDeliveryFields()">
+                        <i class="fa-solid fa-motorcycle text-red-500 block mb-1"></i> Delivery
+                    </label>
+                    <label class="flex-1 border rounded-lg p-3 cursor-pointer bg-white text-center hover:border-red-500 has-[:checked]:border-red-500 has-[:checked]:ring-1 has-[:checked]:ring-red-500 transition">
+                        <input type="radio" name="orderType" value="retirada" class="hidden" onchange="toggleDeliveryFields()">
+                        <i class="fa-solid fa-store text-red-500 block mb-1"></i> Retirada
+                    </label>
+                </div>
+
+                <!-- Campos de Cliente -->
+                <div class="space-y-3">
+                    <div>
+                        <input type="text" id="cliente-nome" placeholder="Seu Nome *" required class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500">
+                    </div>
+                    <div>
+                        <input type="tel" id="cliente-tel" placeholder="Telefone / WhatsApp *" required class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500">
+                    </div>
+                    
+                    <!-- Campos de Endereço (Dinâmicos) -->
+                    <div id="delivery-fields" class="space-y-3">
+                        <div>
+                            <input type="text" id="cliente-endereco" placeholder="Endereço completo *" class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-gray-600 whitespace-nowrap">Tem complemento?</label>
+                            <input type="checkbox" id="has-complement" onchange="document.getElementById('cliente-complemento').classList.toggle('hidden')">
+                        </div>
+                        <div id="cliente-complemento" class="hidden">
+                            <input type="text" id="complemento-text" placeholder="Ex: Apto 12, Bloco B, Casa dos fundos..." class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500">
+                        </div>
+                    </div>
+
+                    <!-- Pagamento -->
+                    <div>
+                        <select id="cliente-pagamento" required class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500 bg-white">
+                            <option value="">Forma de Pagamento *</option>
+                            <option value="Pix">Pix</option>
+                            <option value="Cartão de Crédito">Cartão de Crédito (Maquininha)</option>
+                            <option value="Cartão de Débito">Cartão de Débito (Maquininha)</option>
+                            <option value="Dinheiro">Dinheiro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-between items-center font-bold text-lg mb-4">
+                    <span>Total do Pedido:</span>
+                    <span id="checkout-total-price">R$ 0,00</span>
+                </div>
+
+                <button type="submit" class="w-full bg-green-600 text-white font-bold py-4 rounded-lg hover:bg-green-700 transition flex justify-center items-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-xl"></i> Enviar Pedido
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript da Aplicação -->
+    <script>
+        // CONFIGURAÇÃO DA PIZZARIA
+        const NUMERO_WHATSAPP = "5511999999999"; // SUBSTITUA PELO SEU NÚMERO (DDD + NÚMERO)
+
+        // Banco de Dados do Cardápio
+        const db = {
+            pizzas: [
+                { id: 1, nome: "Calabresa", descricao: "Mussarela, calabresa fatiada e cebola.", preco: 45.00, tipo: "pizza" },
+                { id: 2, nome: "Mussarela", descricao: "Mussarela derretida, rodelas de tomate e orégano.", preco: 40.00, tipo: "pizza" },
+                { id: 3, nome: "Frango com Catupiry", descricao: "Frango desfiado coberto com autêntico catupiry.", preco: 55.00, tipo: "pizza" },
+                { id: 4, nome: "Camarão Especial", descricao: "Camarão puxado no alho, mussarela e catupiry.", preco: 70.00, tipo: "pizza" },
+                { id: 5, nome: "Marguerita", descricao: "Mussarela, tomate, manjericão fresco e parmesão.", preco: 48.00, tipo: "pizza" },
+            ],
+            doces: [
+                { id: 6, nome: "Chocolate com Morango", descricao: "Chocolate ao leite derretido e pedaços de morango.", preco: 50.00, tipo: "pizza" },
+                { id: 7, nome: "Banana com Canela", descricao: "Banana fatiada, leite condensado, canela e mussarela.", preco: 45.00, tipo: "pizza" }
+            ],
+            vinhos: [
+                { id: 8, nome: "Vinho Tinto Suave - 750ml", descricao: "Marca Nacional", preco: 35.00, tipo: "bebida" },
+                { id: 9, nome: "Vinho Seco Reservado - 750ml", descricao: "Vinho Chileno", preco: 65.00, tipo: "bebida" }
+            ],
+            refrigerantes: [
+                { id: 10, nome: "Coca-Cola 2L", descricao: "Refrigerante Gelado", preco: 14.00, tipo: "bebida" },
+                { id: 11, nome: "Guaraná Antarctica 2L", descricao: "Refrigerante Gelado", preco: 12.00, tipo: "bebida" },
+                { id: 12, nome: "Coca-Cola Lata", descricao: "350ml", preco: 6.00, tipo: "bebida" }
+            ]
+        };
+
+        // Estado do Carrinho
+        let cart = [];
+        let itemAtualParaAdicionar = null;
+
+        // Função utilitária para formatar moeda
+        const formatarMoeda = (valor) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // Inicializar a aplicação
+        function init() {
+            renderizarCardapio();
+            // Inicia exigindo campos de delivery
+            document.getElementById('cliente-endereco').required = true;
+        }
+
+        // Renderiza as categorias e itens na tela principal
+        function renderizarCardapio() {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = '';
+
+            const secoes = [
+                { id: 'pizzas', titulo: 'Pizzas Salgadas', itens: db.pizzas },
+                { id: 'doces', titulo: 'Pizzas Doces', itens: db.doces },
+                { id: 'vinhos', titulo: 'Vinhos', itens: db.vinhos },
+                { id: 'refrigerantes', titulo: 'Refrigerantes', itens: db.refrigerantes }
+            ];
+
+            secoes.forEach(secao => {
+                let sectionHTML = `
+                    <section id="${secao.id}" class="mb-10 pt-4 scroll-mt-20">
+                        <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-800">${secao.titulo}</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                `;
+
+                secao.itens.forEach(item => {
+                    sectionHTML += `
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between cursor-pointer hover:shadow-md transition" onclick="abrirModalItem(${item.id})">
+                            <div class="flex-1 pr-4">
+                                <h3 class="font-bold text-gray-800 text-lg">${item.nome}</h3>
+                                <p class="text-sm text-gray-500 mt-1 line-clamp-2">${item.descricao}</p>
+                                <p class="font-bold text-green-600 mt-3">${formatarMoeda(item.preco)}</p>
+                            </div>
+                            <div class="flex items-center">
+                                <button class="bg-gray-100 text-red-600 rounded-lg w-10 h-10 flex items-center justify-center hover:bg-red-50">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                sectionHTML += `</div></section>`;
+                container.innerHTML += sectionHTML;
+            });
+        }
+
+        // Buscar item no DB pelo ID
+        function buscarItem(id) {
+            const todasCategorias = [...db.pizzas, ...db.doces, ...db.vinhos, ...db.refrigerantes];
+            return todasCategorias.find(item => item.id === id);
+        }
+
+        // Abrir Modal de Seleção de Item
+        function abrirModalItem(id) {
+            const item = buscarItem(id);
+            itemAtualParaAdicionar = { ...item }; // Clona o item
+            
+            const modalContent = document.getElementById('item-modal-content');
+            
+            let html = `
+                <h3 class="text-2xl font-bold mb-2">${item.nome}</h3>
+                <p class="text-gray-500 mb-4">${item.descricao}</p>
+                <p class="text-xl font-bold text-green-600 mb-6" id="modal-preco-display">${formatarMoeda(item.preco)}</p>
+            `;
+
+            // Lógica Específica se for Pizza (Permitir 2 Sabores)
+            if (item.tipo === "pizza") {
+                const todasPizzas = [...db.pizzas, ...db.doces].filter(p => p.id !== item.id);
+                
+                html += `
+                    <div class="mb-6 p-4 bg-gray-50 border rounded-xl">
+                        <p class="font-bold mb-3 text-gray-800">Deseja dividir esta pizza?</p>
+                        
+                        <label class="flex items-center gap-3 mb-3 cursor-pointer">
+                            <input type="radio" name="sabores_qtd" value="1" checked class="w-5 h-5 text-red-600" onchange="atualizarPrecoModal()">
+                            <span>Não, quero inteira (1 Sabor)</span>
+                        </label>
+                        
+                        <label class="flex items-center gap-3 cursor-pointer mb-2">
+                            <input type="radio" name="sabores_qtd" value="2" class="w-5 h-5 text-red-600" onchange="atualizarPrecoModal()">
+                            <span>Sim, meio a meio (2 Sabores)</span>
+                        </label>
+                        <p class="text-xs text-red-500 ml-8 mb-3">* Será cobrado o valor do sabor mais caro.</p>
+                        
+                        <select id="segundo-sabor" class="w-full border p-3 rounded-lg bg-white hidden focus:outline-none focus:border-red-500" onchange="atualizarPrecoModal()">
+                            <option value="">Selecione o 2º Sabor...</option>
+                            ${todasPizzas.map(p => `<option value="${p.id}">${p.nome} - ${formatarMoeda(p.preco)}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="mb-6">
+                    <label class="block font-bold mb-2">Observações</label>
+                    <textarea id="item-obs" class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500" rows="2" placeholder="Ex: Tirar cebola, borda recheada (sujeito a taxa)..."></textarea>
+                </div>
+                
+                <button onclick="adicionarAoCarrinho()" class="w-full bg-red-600 text-white font-bold py-4 rounded-xl hover:bg-red-700 transition shadow-lg text-lg">
+                    Adicionar ao Pedido
+                </button>
+            `;
+
+            modalContent.innerHTML = html;
+            document.getElementById('item-modal').classList.remove('hidden');
+        }
+
+        function closeItemModal() {
+            document.getElementById('item-modal').classList.add('hidden');
+        }
+
+        // Lógica de Preço no Modal (2 Sabores = Maior Valor)
+        function atualizarPrecoModal() {
+            if (itemAtualParaAdicionar.tipo !== "pizza") return;
+
+            const radioQtd = document.querySelector('input[name="sabores_qtd"]:checked').value;
+            const selectSegundoSabor = document.getElementById('segundo-sabor');
+            const precoDisplay = document.getElementById('modal-preco-display');
+
+            if (radioQtd === "2") {
+                selectSegundoSabor.classList.remove('hidden');
+                const idSabor2 = selectSegundoSabor.value;
+                if (idSabor2) {
+                    const sabor2 = buscarItem(parseInt(idSabor2));
+                    // Lógica principal: cobra a mais cara
+                    const maiorPreco = Math.max(itemAtualParaAdicionar.preco, sabor2.preco);
+                    precoDisplay.textContent = formatarMoeda(maiorPreco);
+                } else {
+                    precoDisplay.textContent = formatarMoeda(itemAtualParaAdicionar.preco);
+                }
+            } else {
+                selectSegundoSabor.classList.add('hidden');
+                selectSegundoSabor.value = "";
+                precoDisplay.textContent = formatarMoeda(itemAtualParaAdicionar.preco);
+            }
+        }
+
+        // Adicionar item validado ao carrinho
+        function adicionarAoCarrinho() {
+            let nomeItem = itemAtualParaAdicionar.nome;
+            let precoItem = itemAtualParaAdicionar.preco;
+            let obs = document.getElementById('item-obs').value;
+
+            if (itemAtualParaAdicionar.tipo === "pizza") {
+                const radioQtd = document.querySelector('input[name="sabores_qtd"]:checked').value;
+                if (radioQtd === "2") {
+                    const idSabor2 = document.getElementById('segundo-sabor').value;
+                    if (!idSabor2) {
+                        alert("Por favor, selecione o segundo sabor.");
+                        return;
+                    }
+                    const sabor2 = buscarItem(parseInt(idSabor2));
+                    nomeItem = `1/2 ${itemAtualParaAdicionar.nome}, 1/2 ${sabor2.nome}`;
+                    precoItem = Math.max(itemAtualParaAdicionar.preco, sabor2.preco);
+                }
+            }
+
+            const novoItem = {
+                idUnique: Date.now(), // ID único para o carrinho
+                nome: nomeItem,
+                preco: precoItem,
+                obs: obs
+            };
+
+            cart.push(novoItem);
+            closeItemModal();
+            atualizarBotaoCarrinho();
+        }
+
+        // Atualiza a barra flutuante do carrinho
+        function atualizarBotaoCarrinho() {
+            const floatBtn = document.getElementById('cart-float-btn');
+            const floatCount = document.getElementById('cart-float-count');
+            const floatTotal = document.getElementById('cart-float-total');
+
+            if (cart.length > 0) {
+                floatBtn.classList.remove('hidden');
+                floatCount.textContent = cart.length;
+                
+                const total = cart.reduce((acc, item) => acc + item.preco, 0);
+                floatTotal.textContent = formatarMoeda(total);
+            } else {
+                floatBtn.classList.add('hidden');
+            }
+        }
+
+        // Abre modal de checkout
+        function openCartModal() {
+            renderizarItensCarrinho();
+            document.getElementById('cart-modal').classList.remove('hidden');
+        }
+
+        function closeCartModal() {
+            document.getElementById('cart-modal').classList.add('hidden');
+        }
+
+        // Renderiza itens dentro do modal do carrinho
+        function renderizarItensCarrinho() {
+            const container = document.getElementById('cart-items-container');
+            const totalElement = document.getElementById('checkout-total-price');
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 py-6">Seu carrinho está vazio.</p>';
+                totalElement.textContent = 'R$ 0,00';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                total += item.preco;
+                html += `
+                    <div class="flex justify-between items-center mb-4 pb-4 border-b">
+                        <div class="flex-1 pr-4">
+                            <h4 class="font-bold text-sm">${item.nome}</h4>
+                            ${item.obs ? `<p class="text-xs text-gray-500 mt-1">Obs: ${item.obs}</p>` : ''}
+                            <p class="font-bold text-green-600 text-sm mt-1">${formatarMoeda(item.preco)}</p>
+                        </div>
+                        <button onclick="removerDoCarrinho(${item.idUnique})" class="text-red-500 hover:bg-red-50 p-2 rounded">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            totalElement.textContent = formatarMoeda(total);
+        }
+
+        function removerDoCarrinho(idUnique) {
+            cart = cart.filter(item => item.idUnique !== idUnique);
+            renderizarItensCarrinho();
+            atualizarBotaoCarrinho();
+            if (cart.length === 0) {
+                closeCartModal();
+            }
+        }
+
+        // Alternar obrigatoriedade de campos Delivery vs Retirada
+        function toggleDeliveryFields() {
+            const orderType = document.querySelector('input[name="orderType"]:checked').value;
+            const deliveryFields = document.getElementById('delivery-fields');
+            const inputEndereco = document.getElementById('cliente-endereco');
+
+            if (orderType === 'delivery') {
+                deliveryFields.classList.remove('hidden');
+                inputEndereco.required = true;
+            } else {
+                deliveryFields.classList.add('hidden');
+                inputEndereco.required = false;
+                inputEndereco.value = ''; // Limpa o campo
+                document.getElementById('complemento-text').value = '';
+                document.getElementById('has-complement').checked = false;
+                document.getElementById('cliente-complemento').classList.add('hidden');
+            }
+        }
+
+        // Finalizar Pedido e Enviar WhatsApp
+        function finalizeOrder(event) {
+            event.preventDefault(); // Impede o envio do formulário padrão
+
+            if (cart.length === 0) {
+                alert("Adicione itens ao carrinho antes de finalizar!");
+                return;
+            }
+
+            // Coleta de dados
+            const tipoPedido = document.querySelector('input[name="orderType"]:checked').value;
+            const nome = document.getElementById('cliente-nome').value.trim();
+            const telefone = document.getElementById('cliente-tel').value.trim();
+            const pagamento = document.getElementById('cliente-pagamento').value;
+            
+            let enderecoCompleto = "";
+            if (tipoPedido === "delivery") {
+                const endereco = document.getElementById('cliente-endereco').value.trim();
+                const temComplemento = document.getElementById('has-complement').checked;
+                const complemento = document.getElementById('complemento-text').value.trim();
+                
+                enderecoCompleto = endereco;
+                if (temComplemento && complemento) {
+                    enderecoCompleto += ` (Complemento: ${complemento})`;
+                }
+            }
+
+            // Formatação da Mensagem WhatsApp
+            let mensagem = `*NOVO PEDIDO* 🍕\n\n`;
+            mensagem += `*Cliente:* ${nome}\n`;
+            mensagem += `*Telefone:* ${telefone}\n`;
+            mensagem += `*Tipo:* ${tipoPedido === 'delivery' ? '🛵 Delivery' : '🏪 Retirada no balcão'}\n`;
+            
+            if (tipoPedido === "delivery") {
+                mensagem += `*Endereço:* ${enderecoCompleto}\n`;
+            }
+            
+            mensagem += `*Pagamento:* ${pagamento}\n`;
+            mensagem += `\n*-------------------------*\n*ITENS DO PEDIDO:*\n`;
+
+            let total = 0;
+            cart.forEach((item, index) => {
+                mensagem += `${index + 1}x ${item.nome} - ${formatarMoeda(item.preco)}\n`;
+                if (item.obs) {
+                    mensagem += `   _Obs: ${item.obs}_\n`;
+                }
+                total += item.preco;
+            });
+
+            mensagem += `*-------------------------*\n`;
+            mensagem += `*TOTAL A PAGAR: ${formatarMoeda(total)}*`;
+
+            // Gerar link e abrir WhatsApp
+            const linkWhatsApp = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensagem)}`;
+            window.open(linkWhatsApp, '_blank');
+
+            // Limpa o carrinho após finalizar (opcional)
+            cart = [];
+            atualizarBotaoCarrinho();
+            closeCartModal();
+            document.getElementById('checkout-form').reset();
+            toggleDeliveryFields(); // Reseta os campos baseados no radio button
+        }
+
+        // Inicializa o script
+        window.onload = init;
+
+    </script>
+</body>
+</html>
