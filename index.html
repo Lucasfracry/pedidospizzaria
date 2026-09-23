@@ -1,390 +1,470 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizzaria Delícia - Cardápio Online</title>
-    <!-- Tailwind CSS para estilização rápida e moderna (Estilo iFood) -->
+    <title>Barra Funda Pizza e Vinho</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Estilos adicionais para animações e scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #ea1d2c; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #c21422; }
+        /* Personalizações de Scroll e Animações */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f3f4f6; }
+        ::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 10px; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .modal-enter { animation: slideUp 0.3s ease-out forwards; }
         @keyframes slideUp {
             from { transform: translateY(100%); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+
+        .toast-enter { opacity: 1 !important; transform: translate(-50%, -20px) !important; }
         
-        /* Ocultar scrollbar nos menus de navegação horizontais */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Estilização para Rádios Visuais (Botões de Seleção) */
+        .radio-card:has(:checked) { border-color: #dc2626; background-color: #fef2f2; box-shadow: 0 0 0 1px #dc2626; }
+        .radio-card:has(:checked) .radio-icon { color: #dc2626; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans pb-24">
+<body class="bg-gray-50 text-gray-800 font-sans pb-24">
 
-    <!-- Cabeçalho -->
-    <header class="bg-red-600 text-white shadow-md sticky top-0 z-40">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold"><i class="fa-solid fa-pizza-slice mr-2"></i> Pizzaria Delícia</h1>
+    <header class="bg-red-700 text-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4 flex justify-center sm:justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-tight"><i class="fa-solid fa-wine-glass mr-2"></i> Barra Funda Pizza e Vinho</h1>
         </div>
         <!-- Navegação de Categorias -->
         <nav class="bg-white border-b shadow-sm overflow-x-auto no-scrollbar">
-            <ul class="flex whitespace-nowrap container mx-auto px-4 py-3 gap-6 text-gray-600 font-medium">
-                <li><a href="#pizzas" class="hover:text-red-600">Pizzas Salgadas</a></li>
-                <li><a href="#doces" class="hover:text-red-600">Pizzas Doces</a></li>
-                <li><a href="#vinhos" class="hover:text-red-600">Vinhos</a></li>
-                <li><a href="#refrigerantes" class="hover:text-red-600">Refrigerantes</a></li>
+            <ul class="flex whitespace-nowrap container mx-auto px-4 py-3 gap-6 text-gray-600 font-medium text-sm sm:text-base">
+                <li><a href="#pizzas-salgadas" class="hover:text-red-700 transition">Pizzas Salgadas</a></li>
+                <li><a href="#pizzas-doces" class="hover:text-red-700 transition">Pizzas Doces</a></li>
+                <li><a href="#bebidas" class="hover:text-red-700 transition">Bebidas</a></li>
             </ul>
         </nav>
     </header>
 
     <!-- Banner -->
     <div class="container mx-auto px-4 py-6">
-        <div class="bg-red-500 rounded-xl p-6 text-white shadow-lg bg-cover bg-center" style="background-image: linear-gradient(rgba(234, 29, 44, 0.8), rgba(234, 29, 44, 0.9)), url('https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=80');">
-            <h2 class="text-3xl font-bold mb-2">A melhor pizza da região</h2>
-            <p>Peça agora e receba quentinha na sua casa!</p>
+        <div class="rounded-2xl p-6 md:p-10 text-white shadow-lg bg-cover bg-center relative overflow-hidden" style="background-image: url('https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=1200&q=80');">
+            <div class="absolute inset-0 bg-gradient-to-r from-red-900/90 to-black/70"></div>
+            <div class="relative z-10">
+                <h2 class="text-3xl md:text-5xl font-extrabold mb-2 text-white">Barra Funda</h2>
+                <p class="text-lg md:text-xl text-gray-200">A autêntica pizza acompanhada de bons momentos.</p>
+            </div>
         </div>
     </div>
 
-    <!-- Container do Cardápio -->
     <main class="container mx-auto px-4" id="menu-container">
-        <!-- O conteúdo será gerado via JavaScript -->
+        <!-- Itens injetados via JS -->
     </main>
 
-    <!-- Botão Flutuante do Carrinho -->
-    <div id="cart-float-btn" class="fixed bottom-0 left-0 w-full bg-white border-t p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] hidden z-40 transform transition-transform duration-300">
-        <div class="container mx-auto flex justify-between items-center max-w-2xl">
+    <!-- Barra Inferior Carrinho -->
+    <div id="cart-float-btn" class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] hidden z-40 transform transition-transform duration-300">
+        <div class="container mx-auto flex justify-between items-center max-w-3xl">
             <div class="flex flex-col">
-                <span class="text-sm text-gray-500">Total sem entrega</span>
-                <span class="font-bold text-lg" id="cart-float-total">R$ 0,00</span>
+                <span class="text-xs text-gray-500 uppercase font-semibold">Total do Pedido</span>
+                <span class="font-bold text-xl text-gray-800" id="cart-float-total">R$ 0,00</span>
             </div>
-            <button onclick="openCartModal()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-bold flex items-center hover:bg-red-700 transition">
+            <button onclick="openCartModal()" class="bg-red-600 text-white px-6 py-3 rounded-xl font-bold flex items-center hover:bg-red-700 transition shadow-md">
                 <span id="cart-float-count" class="bg-white text-red-600 rounded-full w-6 h-6 flex items-center justify-center mr-2 text-sm">0</span>
                 Ver Carrinho
             </button>
         </div>
     </div>
 
-    <!-- MODAL: Detalhes do Item (Seleção de Sabores) -->
-    <div id="item-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-end sm:items-center justify-center">
-        <div class="bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto modal-enter relative">
-            <button onclick="closeItemModal()" class="absolute top-4 right-4 bg-gray-100 text-gray-600 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-200">
+    <div id="item-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center transition-opacity">
+        <div class="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto modal-enter relative shadow-2xl">
+            <button onclick="closeItemModal()" class="absolute top-4 right-4 bg-gray-100 text-gray-600 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-200 z-10">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div class="p-6 pt-10" id="item-modal-content">
-                <!-- Conteúdo injetado via JS -->
+                <!-- Conteúdo Dinâmico JS -->
             </div>
         </div>
     </div>
 
-    <!-- MODAL: Carrinho e Checkout -->
-    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-end sm:items-center justify-center">
-        <div class="bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto modal-enter relative flex flex-col">
-            <div class="p-4 border-b flex justify-between items-center sticky top-0 bg-white z-10 sm:rounded-t-2xl">
-                <h3 class="text-xl font-bold">Seu Pedido</h3>
-                <button onclick="closeCartModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+    <div id="cart-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center">
+        <div class="bg-white w-full sm:max-w-xl rounded-t-3xl sm:rounded-2xl max-h-[95vh] h-full sm:h-auto flex flex-col modal-enter relative shadow-2xl">
+            <div class="p-5 border-b flex justify-between items-center bg-white sticky top-0 z-10 sm:rounded-t-2xl">
+                <h3 class="text-2xl font-bold text-gray-800">Seu Pedido</h3>
+                <button onclick="closeCartModal()" class="bg-gray-100 text-gray-600 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-200">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
             
-            <div class="p-4 flex-grow" id="cart-items-container">
-                <!-- Itens do carrinho -->
+            <div class="p-5 overflow-y-auto flex-grow bg-gray-50" id="cart-items-container">
+                <!-- Itens do Carrinho JS -->
             </div>
 
-            <!-- Formulário de Checkout -->
-            <form id="checkout-form" class="p-4 bg-gray-50 border-t" onsubmit="finalizeOrder(event)">
-                <h4 class="font-bold mb-3">Detalhes da Entrega</h4>
+            <form id="checkout-form" class="p-5 bg-white border-t" onsubmit="finalizeOrder(event)">
+                <h4 class="font-bold text-gray-700 mb-4 uppercase text-sm tracking-wider">Como deseja receber?</h4>
                 
-                <!-- Tipo de Pedido -->
-                <div class="flex gap-4 mb-4">
-                    <label class="flex-1 border rounded-lg p-3 cursor-pointer bg-white text-center hover:border-red-500 has-[:checked]:border-red-500 has-[:checked]:ring-1 has-[:checked]:ring-red-500 transition">
+                <!-- Toggle Delivery/Retirada -->
+                <div class="flex gap-4 mb-5">
+                    <label class="radio-card flex-1 border-2 border-gray-200 rounded-xl p-4 cursor-pointer text-center transition hover:border-red-200">
                         <input type="radio" name="orderType" value="delivery" class="hidden" checked onchange="toggleDeliveryFields()">
-                        <i class="fa-solid fa-motorcycle text-red-500 block mb-1"></i> Delivery
+                        <i class="fa-solid fa-motorcycle text-gray-400 radio-icon text-xl block mb-2 transition"></i> 
+                        <span class="font-semibold text-gray-700">Delivery</span>
                     </label>
-                    <label class="flex-1 border rounded-lg p-3 cursor-pointer bg-white text-center hover:border-red-500 has-[:checked]:border-red-500 has-[:checked]:ring-1 has-[:checked]:ring-red-500 transition">
+                    <label class="radio-card flex-1 border-2 border-gray-200 rounded-xl p-4 cursor-pointer text-center transition hover:border-red-200">
                         <input type="radio" name="orderType" value="retirada" class="hidden" onchange="toggleDeliveryFields()">
-                        <i class="fa-solid fa-store text-red-500 block mb-1"></i> Retirada
+                        <i class="fa-solid fa-store text-gray-400 radio-icon text-xl block mb-2 transition"></i> 
+                        <span class="font-semibold text-gray-700">Retirada</span>
                     </label>
                 </div>
 
-                <!-- Campos de Cliente -->
-                <div class="space-y-3">
-                    <div>
-                        <input type="text" id="cliente-nome" placeholder="Seu Nome *" required class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500">
-                    </div>
-                    <div>
-                        <input type="tel" id="cliente-tel" placeholder="Telefone / WhatsApp *" required class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <input type="text" id="cliente-nome" placeholder="Seu Nome Completo *" required class="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition">
+                        <input type="tel" id="cliente-tel" placeholder="WhatsApp (com DDD) *" required class="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition">
                     </div>
                     
-                    <!-- Campos de Endereço (Dinâmicos) -->
-                    <div id="delivery-fields" class="space-y-3">
-                        <div>
-                            <input type="text" id="cliente-endereco" placeholder="Endereço completo *" class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500">
+                    <!-- Campos Dinâmicos Delivery -->
+                    <div id="delivery-fields" class="space-y-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <input type="text" id="cliente-endereco" placeholder="Endereço (Rua, Número, Bairro) *" class="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition">
+                        
+                        <div class="flex items-center gap-2 px-1">
+                            <input type="checkbox" id="has-complement" class="w-4 h-4 text-red-600 rounded focus:ring-red-500 cursor-pointer" onchange="toggleComplement()">
+                            <label for="has-complement" class="text-sm font-medium text-gray-700 cursor-pointer">Adicionar complemento (Apto, Bloco...)</label>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <label class="text-sm text-gray-600 whitespace-nowrap">Tem complemento?</label>
-                            <input type="checkbox" id="has-complement" onchange="document.getElementById('cliente-complemento').classList.toggle('hidden')">
-                        </div>
-                        <div id="cliente-complemento" class="hidden">
-                            <input type="text" id="complemento-text" placeholder="Ex: Apto 12, Bloco B, Casa dos fundos..." class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500">
+                        
+                        <div id="div-complemento" class="hidden">
+                            <input type="text" id="complemento-text" placeholder="Ex: Apto 12, Bloco B, Casa dos fundos..." class="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition">
                         </div>
                     </div>
 
-                    <!-- Pagamento -->
-                    <div>
-                        <select id="cliente-pagamento" required class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500 bg-white">
-                            <option value="">Forma de Pagamento *</option>
-                            <option value="Pix">Pix</option>
-                            <option value="Cartão de Crédito">Cartão de Crédito (Maquininha)</option>
-                            <option value="Cartão de Débito">Cartão de Débito (Maquininha)</option>
-                            <option value="Dinheiro">Dinheiro</option>
-                        </select>
-                    </div>
+                    <select id="cliente-pagamento" required class="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition bg-white text-gray-700">
+                        <option value="" disabled selected>Forma de Pagamento *</option>
+                        <option value="Pix">Pix (Chave na entrega)</option>
+                        <option value="Cartão de Crédito">Cartão de Crédito (Maquininha)</option>
+                        <option value="Cartão de Débito">Cartão de Débito (Maquininha)</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                    </select>
                 </div>
 
-                <div class="mt-6 flex justify-between items-center font-bold text-lg mb-4">
-                    <span>Total do Pedido:</span>
-                    <span id="checkout-total-price">R$ 0,00</span>
+                <div class="mt-6 flex justify-between items-end border-t pt-4 mb-4">
+                    <span class="text-gray-500 font-medium">Total do Pedido:</span>
+                    <span id="checkout-total-price" class="text-2xl font-bold text-gray-800">R$ 0,00</span>
                 </div>
 
-                <button type="submit" class="w-full bg-green-600 text-white font-bold py-4 rounded-lg hover:bg-green-700 transition flex justify-center items-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-xl"></i> Enviar Pedido
+                <button type="submit" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition flex justify-center items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    <i class="fa-brands fa-whatsapp text-xl"></i> Enviar Pedido por WhatsApp
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- JavaScript da Aplicação -->
+    <!-- Sistema de Notificação (Toast) -->
+    <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 translate-y-10 bg-gray-900 text-white px-6 py-3 rounded-xl opacity-0 pointer-events-none transition-all duration-300 z-[60] shadow-2xl font-medium text-center min-w-[250px]">
+        Mensagem
+    </div>
+
     <script>
-        // CONFIGURAÇÃO DA PIZZARIA
-        const NUMERO_WHATSAPP = "5511999999999"; // SUBSTITUA PELO SEU NÚMERO (DDD + NÚMERO)
+        const WHATSAPP_NUM = "5511999999999"; 
 
-        // Banco de Dados do Cardápio
-        const db = {
-            pizzas: [
-                { id: 1, nome: "Calabresa", descricao: "Mussarela, calabresa fatiada e cebola.", preco: 45.00, tipo: "pizza" },
-                { id: 2, nome: "Mussarela", descricao: "Mussarela derretida, rodelas de tomate e orégano.", preco: 40.00, tipo: "pizza" },
-                { id: 3, nome: "Frango com Catupiry", descricao: "Frango desfiado coberto com autêntico catupiry.", preco: 55.00, tipo: "pizza" },
-                { id: 4, nome: "Camarão Especial", descricao: "Camarão puxado no alho, mussarela e catupiry.", preco: 70.00, tipo: "pizza" },
-                { id: 5, nome: "Marguerita", descricao: "Mussarela, tomate, manjericão fresco e parmesão.", preco: 48.00, tipo: "pizza" },
-            ],
-            doces: [
-                { id: 6, nome: "Chocolate com Morango", descricao: "Chocolate ao leite derretido e pedaços de morango.", preco: 50.00, tipo: "pizza" },
-                { id: 7, nome: "Banana com Canela", descricao: "Banana fatiada, leite condensado, canela e mussarela.", preco: 45.00, tipo: "pizza" }
-            ],
-            vinhos: [
-                { id: 8, nome: "Vinho Tinto Suave - 750ml", descricao: "Marca Nacional", preco: 35.00, tipo: "bebida" },
-                { id: 9, nome: "Vinho Seco Reservado - 750ml", descricao: "Vinho Chileno", preco: 65.00, tipo: "bebida" }
-            ],
-            refrigerantes: [
-                { id: 10, nome: "Coca-Cola 2L", descricao: "Refrigerante Gelado", preco: 14.00, tipo: "bebida" },
-                { id: 11, nome: "Guaraná Antarctica 2L", descricao: "Refrigerante Gelado", preco: 12.00, tipo: "bebida" },
-                { id: 12, nome: "Coca-Cola Lata", descricao: "350ml", preco: 6.00, tipo: "bebida" }
-            ]
-        };
+        // Database completo da pizzaria
+        const db = [
+            // PIZZAS SALGADAS
+            { id: 1, nome: "1. Mussarela", precos: { grande: 44.90, broto: 29.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 2, nome: "2. Calabresa", precos: { grande: 44.90, broto: 29.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 3, nome: "3. Catupiry", precos: { grande: 49.90, broto: 34.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 4, nome: "4. Alho e Óleo", precos: { grande: 44.90, broto: 29.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 5, nome: "5. Aliche", precos: { grande: 59.90, broto: 39.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 6, nome: "6. Abobrinha", precos: { grande: 69.90, broto: 45.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 7, nome: "7. Anhanguera", precos: { grande: 55.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 8, nome: "8. Atum", precos: { grande: 49.90, broto: 34.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 9, nome: "9. Atum c/ Catupiry", precos: { grande: 75.90, broto: 39.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 10, nome: "10. Bacon", precos: { grande: 59.90, broto: 35.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 11, nome: "11. Baiana", precos: { grande: 49.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 12, nome: "12. Bauru", precos: { grande: 49.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 13, nome: "13. Berinjela", precos: { grande: 49.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 14, nome: "14. Brócolis", precos: { grande: 49.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 15, nome: "15. Camarão", precos: { grande: 79.90, broto: 49.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 16, nome: "16. Camarão Especial", precos: { grande: 89.90, broto: 54.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 17, nome: "17. Champignon", precos: { grande: 49.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 18, nome: "18. Dois Queijos", precos: { grande: 44.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 19, nome: "19. Escaliche", precos: { grande: 66.90, broto: 37.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 20, nome: "20. Escarola", precos: { grande: 49.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 21, nome: "21. Frango á Jardineira", precos: { grande: 67.90, broto: 39.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 22, nome: "22. Frango á Caipira", precos: { grande: 65.90, broto: 37.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 23, nome: "23. Frango com Catupiry", precos: { grande: 54.90, broto: 34.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 24, nome: "24. Jardineira", precos: { grande: 66.90, broto: 39.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 25, nome: "25. Light", precos: { grande: 59.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 26, nome: "26. Lombinho", precos: { grande: 59.90, broto: 39.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 27, nome: "27. Marguerita", precos: { grande: 69.90, broto: 39.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 28, nome: "28. Milho Verde", precos: { grande: 69.90, broto: 37.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 29, nome: "29. Moda da Casa", precos: { grande: 49.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 30, nome: "30. Mussarela de Búfala", precos: { grande: 65.90, broto: 39.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 31, nome: "31. Napolitana", precos: { grande: 49.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 32, nome: "32. Palmito", precos: { grande: 49.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 33, nome: "33. Peito de Peru", precos: { grande: 59.90, broto: 39.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 34, nome: "34. Peperoni", precos: { grande: 69.90, broto: 45.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 35, nome: "35. Portugália", precos: { grande: 55.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 36, nome: "36. Portuguesa", precos: { grande: 49.90, broto: 34.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 37, nome: "37. Portuguesa Especial", precos: { grande: 75.90, broto: 39.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 38, nome: "38. Quatro Queijos", precos: { grande: 54.90, broto: 35.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 39, nome: "39. Romana", precos: { grande: 49.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 40, nome: "40. Rúcula", precos: { grande: 65.90, broto: 39.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 41, nome: "41. Salgueiro", precos: { grande: 69.90, broto: 37.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 42, nome: "42. Siciliana", precos: { grande: 59.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 43, nome: "43. Toscana", precos: { grande: 59.90, broto: 34.90 }, categoria: 'salgada', tipo: 'pizza' },
+            { id: 44, nome: "44. Vegetariana", precos: { grande: 59.90, broto: 33.90 }, categoria: 'salgada', tipo: 'pizza' },
+            
+            // PIZZAS DOCES
+            { id: 50, nome: "50. Banana", precos: { grande: 49.90, broto: 34.90 }, categoria: 'doce', tipo: 'pizza' },
+            { id: 51, nome: "51. Banana com Chocolate", precos: { grande: 59.90, broto: 39.90 }, categoria: 'doce', tipo: 'pizza' },
+            { id: 52, nome: "52. Chocolate", precos: { grande: 54.90, broto: 34.90 }, categoria: 'doce', tipo: 'pizza' },
+            { id: 53, nome: "53. Doce de Leite", precos: { grande: 54.90, broto: 34.90 }, categoria: 'doce', tipo: 'pizza' },
+            { id: 54, nome: "54. Romeu e Julieta", precos: { grande: 54.90, broto: 34.90 }, categoria: 'doce', tipo: 'pizza' },
+            { id: 55, nome: "55. Prestígio", precos: { grande: 54.90, broto: 34.90 }, categoria: 'doce', tipo: 'pizza' },
+            { id: 56, nome: "56. Nutela", precos: { grande: 79.90, broto: 44.90 }, categoria: 'doce', tipo: 'pizza' },
+            { id: 57, nome: "57. M&M", precos: { grande: 64.90, broto: 44.90 }, categoria: 'doce', tipo: 'pizza' },
+            { id: 58, nome: "58. Chocolate com Morango", precos: { grande: 64.90, broto: 39.90 }, categoria: 'doce', tipo: 'pizza' },
 
-        // Estado do Carrinho
+            // BEBIDAS
+            { id: 100, nome: "Coca-Cola 2 Litros", preco: 19.90, categoria: 'bebida', tipo: 'bebida' },
+            { id: 101, nome: "Guaraná 2 Litros", preco: 18.90, categoria: 'bebida', tipo: 'bebida' },
+            { id: 102, nome: "Sprite 2 Litros", preco: 17.90, categoria: 'bebida', tipo: 'bebida' },
+            { id: 103, nome: "Refrigerante 350ml", preco: 7.90, categoria: 'bebida', tipo: 'bebida' },
+            { id: 104, nome: "Suco 1 Litro", preco: 10.90, categoria: 'bebida', tipo: 'bebida' },
+            { id: 105, nome: "Água Pequena", preco: 6.00, categoria: 'bebida', tipo: 'bebida' }
+        ];
+
         let cart = [];
-        let itemAtualParaAdicionar = null;
+        let itemAtual = null;
 
-        // Função utilitária para formatar moeda
-        const formatarMoeda = (valor) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-        // Inicializar a aplicação
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('toast-enter');
+            setTimeout(() => {
+                toast.classList.remove('toast-enter');
+            }, 3000);
+        }
+
         function init() {
-            renderizarCardapio();
-            // Inicia exigindo campos de delivery
+            renderMenu();
             document.getElementById('cliente-endereco').required = true;
         }
 
-        // Renderiza as categorias e itens na tela principal
-        function renderizarCardapio() {
+        function renderMenu() {
             const container = document.getElementById('menu-container');
-            container.innerHTML = '';
-
-            const secoes = [
-                { id: 'pizzas', titulo: 'Pizzas Salgadas', itens: db.pizzas },
-                { id: 'doces', titulo: 'Pizzas Doces', itens: db.doces },
-                { id: 'vinhos', titulo: 'Vinhos', itens: db.vinhos },
-                { id: 'refrigerantes', titulo: 'Refrigerantes', itens: db.refrigerantes }
+            const categorias = [
+                { id: 'pizzas-salgadas', title: 'Pizzas Salgadas', filter: i => i.categoria === 'salgada' },
+                { id: 'pizzas-doces', title: 'Pizzas Doces', filter: i => i.categoria === 'doce' },
+                { id: 'bebidas', title: 'Bebidas', filter: i => i.tipo === 'bebida' }
             ];
 
-            secoes.forEach(secao => {
-                let sectionHTML = `
-                    <section id="${secao.id}" class="mb-10 pt-4 scroll-mt-20">
-                        <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-800">${secao.titulo}</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            let html = '';
+            categorias.forEach(cat => {
+                const itens = db.filter(cat.filter);
+                if (itens.length === 0) return;
+
+                html += `
+                    <section id="${cat.id}" class="pt-8 mb-8 scroll-mt-24">
+                        <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b-2 border-red-100 pb-2 inline-block">${cat.title}</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 `;
 
-                secao.itens.forEach(item => {
-                    sectionHTML += `
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between cursor-pointer hover:shadow-md transition" onclick="abrirModalItem(${item.id})">
-                            <div class="flex-1 pr-4">
-                                <h3 class="font-bold text-gray-800 text-lg">${item.nome}</h3>
-                                <p class="text-sm text-gray-500 mt-1 line-clamp-2">${item.descricao}</p>
-                                <p class="font-bold text-green-600 mt-3">${formatarMoeda(item.preco)}</p>
+                itens.forEach(item => {
+                    const priceText = item.tipo === 'pizza' 
+                        ? `<span class="text-xs text-gray-500 block mb-1">A partir de</span> <span class="font-bold text-lg text-green-600">${formatMoney(item.precos.broto)}</span>`
+                        : `<span class="font-bold text-lg text-green-600 mt-2 block">${formatMoney(item.preco)}</span>`;
+
+                    html += `
+                        <div class="bg-white p-5 rounded-2xl shadow-sm hover:shadow-md border border-gray-100 flex flex-col justify-between cursor-pointer transition transform hover:-translate-y-1" onclick="openModalItem(${item.id})">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg mb-1">${item.nome}</h3>
                             </div>
-                            <div class="flex items-center">
-                                <button class="bg-gray-100 text-red-600 rounded-lg w-10 h-10 flex items-center justify-center hover:bg-red-50">
+                            <div class="flex justify-between items-end mt-4">
+                                <div>${priceText}</div>
+                                <button class="bg-red-50 text-red-600 rounded-xl w-10 h-10 flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors shadow-sm">
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
                             </div>
                         </div>
                     `;
                 });
-
-                sectionHTML += `</div></section>`;
-                container.innerHTML += sectionHTML;
+                html += `</div></section>`;
             });
+            container.innerHTML = html;
         }
 
-        // Buscar item no DB pelo ID
-        function buscarItem(id) {
-            const todasCategorias = [...db.pizzas, ...db.doces, ...db.vinhos, ...db.refrigerantes];
-            return todasCategorias.find(item => item.id === id);
-        }
-
-        // Abrir Modal de Seleção de Item
-        function abrirModalItem(id) {
-            const item = buscarItem(id);
-            itemAtualParaAdicionar = { ...item }; // Clona o item
-            
-            const modalContent = document.getElementById('item-modal-content');
+        function openModalItem(id) {
+            itemAtual = { ...db.find(i => i.id === id) };
+            const content = document.getElementById('item-modal-content');
             
             let html = `
-                <h3 class="text-2xl font-bold mb-2">${item.nome}</h3>
-                <p class="text-gray-500 mb-4">${item.descricao}</p>
-                <p class="text-xl font-bold text-green-600 mb-6" id="modal-preco-display">${formatarMoeda(item.preco)}</p>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">${itemAtual.nome}</h3>
             `;
 
-            // Lógica Específica se for Pizza (Permitir 2 Sabores)
-            if (item.tipo === "pizza") {
-                const todasPizzas = [...db.pizzas, ...db.doces].filter(p => p.id !== item.id);
+            if (itemAtual.tipo === 'pizza') {
+                const outrasPizzas = db.filter(i => i.categoria === itemAtual.categoria && i.id !== itemAtual.id);
                 
                 html += `
-                    <div class="mb-6 p-4 bg-gray-50 border rounded-xl">
-                        <p class="font-bold mb-3 text-gray-800">Deseja dividir esta pizza?</p>
+                    <!-- Seleção de Tamanho -->
+                    <div class="my-6">
+                        <h4 class="font-bold text-sm text-gray-500 uppercase tracking-wider mb-3">Tamanho</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="radio-card border border-gray-200 rounded-xl p-3 cursor-pointer text-center transition">
+                                <input type="radio" name="pizza_size" value="grande" checked class="hidden" onchange="updateModalPrice()">
+                                <div class="font-bold text-gray-800">Grande</div>
+                                <div class="text-sm text-gray-500">8 Fatias</div>
+                            </label>
+                            <label class="radio-card border border-gray-200 rounded-xl p-3 cursor-pointer text-center transition">
+                                <input type="radio" name="pizza_size" value="broto" class="hidden" onchange="updateModalPrice()">
+                                <div class="font-bold text-gray-800">Broto</div>
+                                <div class="text-sm text-gray-500">4 Fatias</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Seleção de Formato (1 ou 2 Sabores) -->
+                    <div class="mb-6">
+                        <h4 class="font-bold text-sm text-gray-500 uppercase tracking-wider mb-3">Formato</h4>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <label class="radio-card border border-gray-200 rounded-xl p-3 cursor-pointer flex items-center gap-2 transition">
+                                <input type="radio" name="pizza_format" value="1" checked class="hidden" onchange="updateModalPrice()">
+                                <i class="fa-solid fa-circle-check radio-icon text-gray-300"></i>
+                                <span class="font-medium text-gray-700">1 Sabor</span>
+                            </label>
+                            <label class="radio-card border border-gray-200 rounded-xl p-3 cursor-pointer flex items-center gap-2 transition">
+                                <input type="radio" name="pizza_format" value="2" class="hidden" onchange="updateModalPrice()">
+                                <i class="fa-solid fa-circle-check radio-icon text-gray-300"></i>
+                                <span class="font-medium text-gray-700">Meio a Meio</span>
+                            </label>
+                        </div>
                         
-                        <label class="flex items-center gap-3 mb-3 cursor-pointer">
-                            <input type="radio" name="sabores_qtd" value="1" checked class="w-5 h-5 text-red-600" onchange="atualizarPrecoModal()">
-                            <span>Não, quero inteira (1 Sabor)</span>
-                        </label>
-                        
-                        <label class="flex items-center gap-3 cursor-pointer mb-2">
-                            <input type="radio" name="sabores_qtd" value="2" class="w-5 h-5 text-red-600" onchange="atualizarPrecoModal()">
-                            <span>Sim, meio a meio (2 Sabores)</span>
-                        </label>
-                        <p class="text-xs text-red-500 ml-8 mb-3">* Será cobrado o valor do sabor mais caro.</p>
-                        
-                        <select id="segundo-sabor" class="w-full border p-3 rounded-lg bg-white hidden focus:outline-none focus:border-red-500" onchange="atualizarPrecoModal()">
-                            <option value="">Selecione o 2º Sabor...</option>
-                            ${todasPizzas.map(p => `<option value="${p.id}">${p.nome} - ${formatarMoeda(p.preco)}</option>`).join('')}
-                        </select>
+                        <div id="div-segundo-sabor" class="hidden animate-[slideUp_0.2s_ease-out]">
+                            <p class="text-xs text-red-500 mb-2 font-medium bg-red-50 p-2 rounded-lg">* Na pizza meio a meio, será cobrado o valor do sabor mais caro do tamanho escolhido.</p>
+                            <select id="segundo-sabor" class="w-full border border-gray-300 p-3 rounded-xl bg-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition" onchange="updateModalPrice()">
+                                <option value="" disabled selected>Escolha o 2º Sabor...</option>
+                                ${outrasPizzas.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')}
+                            </select>
+                        </div>
                     </div>
                 `;
             }
 
             html += `
                 <div class="mb-6">
-                    <label class="block font-bold mb-2">Observações</label>
-                    <textarea id="item-obs" class="w-full border rounded-lg p-3 focus:outline-none focus:border-red-500" rows="2" placeholder="Ex: Tirar cebola, borda recheada (sujeito a taxa)..."></textarea>
+                    <h4 class="font-bold text-sm text-gray-500 uppercase tracking-wider mb-3">Observações</h4>
+                    <textarea id="item-obs" class="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition resize-none" rows="2" placeholder="Ex: Tirar cebola, ponto da carne..."></textarea>
                 </div>
                 
-                <button onclick="adicionarAoCarrinho()" class="w-full bg-red-600 text-white font-bold py-4 rounded-xl hover:bg-red-700 transition shadow-lg text-lg">
-                    Adicionar ao Pedido
-                </button>
+                <div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-2">
+                    <span class="text-2xl font-bold text-gray-800" id="modal-preco-display">R$ 0,00</span>
+                    <button onclick="adicionarAoCarrinho()" class="bg-red-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-red-700 transition shadow-lg">
+                        Adicionar
+                    </button>
+                </div>
             `;
 
-            modalContent.innerHTML = html;
+            content.innerHTML = html;
             document.getElementById('item-modal').classList.remove('hidden');
+            
+            // Força a atualização do preço inicial
+            setTimeout(updateModalPrice, 10);
         }
 
         function closeItemModal() {
             document.getElementById('item-modal').classList.add('hidden');
         }
 
-        // Lógica de Preço no Modal (2 Sabores = Maior Valor)
-        function atualizarPrecoModal() {
-            if (itemAtualParaAdicionar.tipo !== "pizza") return;
+        function updateModalPrice() {
+            if (itemAtual.tipo !== 'pizza') {
+                document.getElementById('modal-preco-display').textContent = formatMoney(itemAtual.preco);
+                return;
+            }
 
-            const radioQtd = document.querySelector('input[name="sabores_qtd"]:checked').value;
-            const selectSegundoSabor = document.getElementById('segundo-sabor');
-            const precoDisplay = document.getElementById('modal-preco-display');
+            const sizeRadio = document.querySelector('input[name="pizza_size"]:checked');
+            const formatRadio = document.querySelector('input[name="pizza_format"]:checked');
+            
+            if (!sizeRadio || !formatRadio) return;
 
-            if (radioQtd === "2") {
-                selectSegundoSabor.classList.remove('hidden');
-                const idSabor2 = selectSegundoSabor.value;
-                if (idSabor2) {
-                    const sabor2 = buscarItem(parseInt(idSabor2));
-                    // Lógica principal: cobra a mais cara
-                    const maiorPreco = Math.max(itemAtualParaAdicionar.preco, sabor2.preco);
-                    precoDisplay.textContent = formatarMoeda(maiorPreco);
-                } else {
-                    precoDisplay.textContent = formatarMoeda(itemAtualParaAdicionar.preco);
+            const size = sizeRadio.value; // 'grande' ou 'broto'
+            const isDoisSabores = formatRadio.value === "2";
+            const selectSabor2 = document.getElementById('segundo-sabor');
+            const divSabor2 = document.getElementById('div-segundo-sabor');
+
+            let finalPrice = itemAtual.precos[size];
+
+            if (isDoisSabores) {
+                divSabor2.classList.remove('hidden');
+                if (selectSabor2.value) {
+                    const sabor2 = db.find(i => i.id === parseInt(selectSabor2.value));
+                    if (sabor2) {
+                        finalPrice = Math.max(itemAtual.precos[size], sabor2.precos[size]);
+                    }
                 }
             } else {
-                selectSegundoSabor.classList.add('hidden');
-                selectSegundoSabor.value = "";
-                precoDisplay.textContent = formatarMoeda(itemAtualParaAdicionar.preco);
+                divSabor2.classList.add('hidden');
+                selectSabor2.value = "";
             }
+
+            document.getElementById('modal-preco-display').textContent = formatMoney(finalPrice);
         }
 
-        // Adicionar item validado ao carrinho
         function adicionarAoCarrinho() {
-            let nomeItem = itemAtualParaAdicionar.nome;
-            let precoItem = itemAtualParaAdicionar.preco;
-            let obs = document.getElementById('item-obs').value;
+            let itemName = itemAtual.nome;
+            let itemPrice = 0;
+            let detailString = "";
+            const obs = document.getElementById('item-obs') ? document.getElementById('item-obs').value.trim() : "";
 
-            if (itemAtualParaAdicionar.tipo === "pizza") {
-                const radioQtd = document.querySelector('input[name="sabores_qtd"]:checked').value;
-                if (radioQtd === "2") {
-                    const idSabor2 = document.getElementById('segundo-sabor').value;
-                    if (!idSabor2) {
-                        alert("Por favor, selecione o segundo sabor.");
+            if (itemAtual.tipo === 'pizza') {
+                const size = document.querySelector('input[name="pizza_size"]:checked').value;
+                const isDoisSabores = document.querySelector('input[name="pizza_format"]:checked').value === "2";
+                
+                let basePrice = itemAtual.precos[size];
+
+                if (isDoisSabores) {
+                    const select2 = document.getElementById('segundo-sabor');
+                    if (!select2.value) {
+                        showToast("Selecione o 2º sabor para a pizza meio a meio.");
                         return;
                     }
-                    const sabor2 = buscarItem(parseInt(idSabor2));
-                    nomeItem = `1/2 ${itemAtualParaAdicionar.nome}, 1/2 ${sabor2.nome}`;
-                    precoItem = Math.max(itemAtualParaAdicionar.preco, sabor2.preco);
+                    const sabor2 = db.find(i => i.id === parseInt(select2.value));
+                    itemName = `1/2 ${itemAtual.nome.split('. ')[1] || itemAtual.nome} e 1/2 ${sabor2.nome.split('. ')[1] || sabor2.nome}`;
+                    basePrice = Math.max(itemAtual.precos[size], sabor2.precos[size]);
                 }
-            }
 
-            const novoItem = {
-                idUnique: Date.now(), // ID único para o carrinho
-                nome: nomeItem,
-                preco: precoItem,
-                obs: obs
-            };
-
-            cart.push(novoItem);
-            closeItemModal();
-            atualizarBotaoCarrinho();
-        }
-
-        // Atualiza a barra flutuante do carrinho
-        function atualizarBotaoCarrinho() {
-            const floatBtn = document.getElementById('cart-float-btn');
-            const floatCount = document.getElementById('cart-float-count');
-            const floatTotal = document.getElementById('cart-float-total');
-
-            if (cart.length > 0) {
-                floatBtn.classList.remove('hidden');
-                floatCount.textContent = cart.length;
-                
-                const total = cart.reduce((acc, item) => acc + item.preco, 0);
-                floatTotal.textContent = formatarMoeda(total);
+                itemPrice = basePrice;
+                detailString = size === 'grande' ? 'Tamanho: Grande' : 'Tamanho: Broto';
             } else {
-                floatBtn.classList.add('hidden');
+                itemPrice = itemAtual.preco;
+            }
+
+            cart.push({
+                idCart: Date.now(),
+                nome: itemName,
+                preco: itemPrice,
+                detalhes: detailString,
+                obs: obs
+            });
+
+            closeItemModal();
+            updateCartUI();
+            showToast("Item adicionado ao carrinho!");
+        }
+
+        function updateCartUI() {
+            const btn = document.getElementById('cart-float-btn');
+            if (cart.length > 0) {
+                btn.classList.remove('hidden');
+                document.getElementById('cart-float-count').textContent = cart.length;
+                const total = cart.reduce((acc, curr) => acc + curr.preco, 0);
+                document.getElementById('cart-float-total').textContent = formatMoney(total);
+            } else {
+                btn.classList.add('hidden');
+                closeCartModal(); // Fecha se esvaziar
             }
         }
 
-        // Abre modal de checkout
         function openCartModal() {
-            renderizarItensCarrinho();
+            renderCartItems();
             document.getElementById('cart-modal').classList.remove('hidden');
         }
 
@@ -392,14 +472,13 @@
             document.getElementById('cart-modal').classList.add('hidden');
         }
 
-        // Renderiza itens dentro do modal do carrinho
-        function renderizarItensCarrinho() {
+        function renderCartItems() {
             const container = document.getElementById('cart-items-container');
-            const totalElement = document.getElementById('checkout-total-price');
+            const totalEl = document.getElementById('checkout-total-price');
             
             if (cart.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500 py-6">Seu carrinho está vazio.</p>';
-                totalElement.textContent = 'R$ 0,00';
+                container.innerHTML = '<p class="text-center text-gray-500 py-10 font-medium">Seu carrinho está vazio.</p>';
+                totalEl.textContent = 'R$ 0,00';
                 return;
             }
 
@@ -409,13 +488,14 @@
             cart.forEach(item => {
                 total += item.preco;
                 html += `
-                    <div class="flex justify-between items-center mb-4 pb-4 border-b">
-                        <div class="flex-1 pr-4">
-                            <h4 class="font-bold text-sm">${item.nome}</h4>
-                            ${item.obs ? `<p class="text-xs text-gray-500 mt-1">Obs: ${item.obs}</p>` : ''}
-                            <p class="font-bold text-green-600 text-sm mt-1">${formatarMoeda(item.preco)}</p>
+                    <div class="flex justify-between items-start mb-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                        <div class="flex-1 pr-3">
+                            <h4 class="font-bold text-gray-800">${item.nome}</h4>
+                            ${item.detalhes ? `<p class="text-xs text-gray-500 mt-1 font-medium bg-gray-100 inline-block px-2 py-1 rounded">${item.detalhes}</p>` : ''}
+                            ${item.obs ? `<p class="text-sm text-gray-600 mt-2 italic">Obs: ${item.obs}</p>` : ''}
+                            <p class="font-bold text-green-600 text-sm mt-2">${formatMoney(item.preco)}</p>
                         </div>
-                        <button onclick="removerDoCarrinho(${item.idUnique})" class="text-red-500 hover:bg-red-50 p-2 rounded">
+                        <button type="button" onclick="removeFromCart(${item.idCart})" class="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -423,104 +503,97 @@
             });
 
             container.innerHTML = html;
-            totalElement.textContent = formatarMoeda(total);
+            totalEl.textContent = formatMoney(total);
         }
 
-        function removerDoCarrinho(idUnique) {
-            cart = cart.filter(item => item.idUnique !== idUnique);
-            renderizarItensCarrinho();
-            atualizarBotaoCarrinho();
-            if (cart.length === 0) {
-                closeCartModal();
-            }
+        function removeFromCart(idCart) {
+            cart = cart.filter(c => c.idCart !== idCart);
+            renderCartItems();
+            updateCartUI();
         }
 
-        // Alternar obrigatoriedade de campos Delivery vs Retirada
         function toggleDeliveryFields() {
-            const orderType = document.querySelector('input[name="orderType"]:checked').value;
-            const deliveryFields = document.getElementById('delivery-fields');
-            const inputEndereco = document.getElementById('cliente-endereco');
+            const isDelivery = document.querySelector('input[name="orderType"]:checked').value === 'delivery';
+            const fieldsDiv = document.getElementById('delivery-fields');
+            const inputAddress = document.getElementById('cliente-endereco');
 
-            if (orderType === 'delivery') {
-                deliveryFields.classList.remove('hidden');
-                inputEndereco.required = true;
+            if (isDelivery) {
+                fieldsDiv.classList.remove('hidden');
+                inputAddress.required = true;
             } else {
-                deliveryFields.classList.add('hidden');
-                inputEndereco.required = false;
-                inputEndereco.value = ''; // Limpa o campo
-                document.getElementById('complemento-text').value = '';
+                fieldsDiv.classList.add('hidden');
+                inputAddress.required = false;
+                inputAddress.value = '';
                 document.getElementById('has-complement').checked = false;
-                document.getElementById('cliente-complemento').classList.add('hidden');
+                document.getElementById('div-complemento').classList.add('hidden');
+                document.getElementById('complemento-text').value = '';
             }
         }
 
-        // Finalizar Pedido e Enviar WhatsApp
-        function finalizeOrder(event) {
-            event.preventDefault(); // Impede o envio do formulário padrão
+        function toggleComplement() {
+            const isChecked = document.getElementById('has-complement').checked;
+            document.getElementById('div-complemento').classList.toggle('hidden', !isChecked);
+            if (!isChecked) document.getElementById('complemento-text').value = '';
+        }
 
+        function finalizeOrder(e) {
+            e.preventDefault();
+            
             if (cart.length === 0) {
-                alert("Adicione itens ao carrinho antes de finalizar!");
+                showToast("Adicione produtos ao carrinho!");
                 return;
             }
 
-            // Coleta de dados
-            const tipoPedido = document.querySelector('input[name="orderType"]:checked').value;
             const nome = document.getElementById('cliente-nome').value.trim();
             const telefone = document.getElementById('cliente-tel').value.trim();
             const pagamento = document.getElementById('cliente-pagamento').value;
+            const tipo = document.querySelector('input[name="orderType"]:checked').value;
             
-            let enderecoCompleto = "";
-            if (tipoPedido === "delivery") {
-                const endereco = document.getElementById('cliente-endereco').value.trim();
-                const temComplemento = document.getElementById('has-complement').checked;
-                const complemento = document.getElementById('complemento-text').value.trim();
-                
-                enderecoCompleto = endereco;
-                if (temComplemento && complemento) {
-                    enderecoCompleto += ` (Complemento: ${complemento})`;
-                }
+            let enderecoStr = "";
+            if (tipo === 'delivery') {
+                enderecoStr = document.getElementById('cliente-endereco').value.trim();
+                const comp = document.getElementById('complemento-text').value.trim();
+                if (comp) enderecoStr += ` (Complemento: ${comp})`;
             }
 
-            // Formatação da Mensagem WhatsApp
-            let mensagem = `*NOVO PEDIDO* 🍕\n\n`;
-            mensagem += `*Cliente:* ${nome}\n`;
-            mensagem += `*Telefone:* ${telefone}\n`;
-            mensagem += `*Tipo:* ${tipoPedido === 'delivery' ? '🛵 Delivery' : '🏪 Retirada no balcão'}\n`;
+            // Construção da Mensagem
+            let txt = `*NOVO PEDIDO - BARRA FUNDA PIZZA E VINHO* 🍕\n\n`;
+            txt += `*Cliente:* ${nome}\n`;
+            txt += `*Contato:* ${telefone}\n`;
+            txt += `*Tipo:* ${tipo === 'delivery' ? '🛵 Delivery' : '🏪 Retirada no balcão'}\n`;
             
-            if (tipoPedido === "delivery") {
-                mensagem += `*Endereço:* ${enderecoCompleto}\n`;
+            if (tipo === 'delivery') {
+                txt += `*Endereço:* ${enderecoStr}\n`;
             }
             
-            mensagem += `*Pagamento:* ${pagamento}\n`;
-            mensagem += `\n*-------------------------*\n*ITENS DO PEDIDO:*\n`;
+            txt += `*Pagamento:* ${pagamento}\n\n`;
+            txt += `*------------ ITENS ------------*\n\n`;
 
             let total = 0;
             cart.forEach((item, index) => {
-                mensagem += `${index + 1}x ${item.nome} - ${formatarMoeda(item.preco)}\n`;
-                if (item.obs) {
-                    mensagem += `   _Obs: ${item.obs}_\n`;
-                }
                 total += item.preco;
+                txt += `*${index + 1}. ${item.nome}*\n`;
+                if (item.detalhes) txt += `   ↳ ${item.detalhes}\n`;
+                if (item.obs) txt += `   ↳ _Obs: ${item.obs}_\n`;
+                txt += `   ↳ Valor: ${formatMoney(item.preco)}\n\n`;
             });
 
-            mensagem += `*-------------------------*\n`;
-            mensagem += `*TOTAL A PAGAR: ${formatarMoeda(total)}*`;
+            txt += `*-------------------------------*\n`;
+            txt += `*TOTAL A PAGAR: ${formatMoney(total)}*`;
 
-            // Gerar link e abrir WhatsApp
-            const linkWhatsApp = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensagem)}`;
-            window.open(linkWhatsApp, '_blank');
-
-            // Limpa o carrinho após finalizar (opcional)
-            cart = [];
-            atualizarBotaoCarrinho();
-            closeCartModal();
-            document.getElementById('checkout-form').reset();
-            toggleDeliveryFields(); // Reseta os campos baseados no radio button
+            const linkData = encodeURIComponent(txt);
+            const waLink = `https://wa.me/${WHATSAPP_NUM}?text=${linkData}`;
+            
+            window.open(waLink, '_blank');
+            
+            // Opcional: Esvaziar carrinho após enviar
+            // cart = [];
+            // updateCartUI();
+            // closeCartModal();
         }
 
-        // Inicializa o script
+        // Iniciar
         window.onload = init;
-
     </script>
 </body>
 </html>
